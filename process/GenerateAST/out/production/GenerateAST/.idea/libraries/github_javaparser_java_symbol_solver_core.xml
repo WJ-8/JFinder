@@ -1,0 +1,17 @@
+<component name="libraryTable">
+  <library name="github.javaparser.java.symbol.solver.core" type="repository">
+    <properties maven-id="com.github.javaparser:java-symbol-solver-core:0.6.2" />
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/java-symbol-solver-core-0.6.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/java-symbol-solver-logic-0.6.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/javaslang-2.0.3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/javaslang-match-2.0.3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/java-symbol-solver-model-0.6.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/javaparser-core-3.5.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/javassist-3.19.0-GA.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/guava-21.0.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
