@@ -20,22 +20,10 @@ import os
 import wandb
 from wandb.keras import WandbCallback
 
-wandb.init(project="JFinder", entity="wangjin2003512")
-
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
 
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"
-# seed_value = 2022
-# os.environ['PYTHONHASHSEED'] = str(seed_value)
-# random.seed(seed_value)
-# np.random.seed(seed_value)
-# tf.random.set_seed(seed_value)
 
-
-# 加载训练集
-# train_dataset = pd.read_pickle('data/embedding/train_0')
-# for i in range(1, 8):
-#     train_dataset = pd.concat([train_dataset, pd.read_pickle(f"data/embedding/train_{i}")])
 y_train = np.load("data/ready/train_y.npy")
 x_train_emb = np.load("data/ready/emb_train.npy")
 x_train_ast = np.load("data/ready/ast_train.npy")
@@ -97,18 +85,10 @@ z = Dense(1, activation='sigmoid')(dense_1)
 # z = Dense(2,use_bias=False)(z)
 
 model = Model(inputs=[input_emb, input_ast, input_dfg, input_cfg], outputs=z)
-model.compile(optimizer=Adam(learning_rate=1e-5), loss=["binary_crossentropy"],  # 8e-7
+model.compile(optimizer=Adam(learning_rate=1e-5), loss=["binary_crossentropy"], 
               metrics=["binary_accuracy", km.f1_score(), km.binary_precision(), km.binary_recall()])
-# model.compile(optimizer=Adam(learning_rate=1e-5), loss=[SparseCircleLoss(batch_size=64,gamma=64, margin=0.4)],
-#               metrics=[tf.keras.metrics.SparseCategoricalAccuracy('acc')])
-
 checkpoints = ModelCheckpoint(filepath='model/ck/weights.{epoch:04d}.hdf5', monitor="val_loss", verbose=1,
                               save_weights_only=True, period=100)
-wandb.config = {
-    # "learning_rate": 0.00001,
-    "epochs": 20,
-    "batch_size": 16
-}
 history = model.fit(
     [x_train_emb, x_train_ast, x_train_dfg, x_train_cfg], y_train,
     validation_data=([x_val_emb, x_val_ast, x_val_dfg, x_val_cfg], y_val),
@@ -116,21 +96,6 @@ history = model.fit(
     epochs=50, batch_size=16, verbose=2, callbacks=[WandbCallback(save_model=False, save_graph=False)])
 
 score = model.evaluate([x_test_emb, x_test_ast, x_test_dfg, x_test_cfg], y_test, verbose=0, batch_size=32)
-result = model.predict([x_test_emb, x_test_ast, x_test_dfg, x_test_cfg], batch_size=128)
-for i in range(len(result)):
-    result[i] = 1 if result[i] >= 0.5 else 0
-with open("paper_exp/output/test.txt", "w") as f:
-    for i in range(y_test.shape[0]):
-        f.write(str(y_test[i])+"\n")
-with open("paper_exp/output/predict.txt", "w") as f:
-    c = result.tolist()
-    for i in c:
-        f.write(str(int(i[0]))+"\n")
-# print(y_test)
-# print(result)
-# print(ls_result)
-print(accuracy_score(y_test, result))
-print(f1_score(y_test, result))
-model.save('model/magic_model.h5')
+model.save('model/JFinder.h5')
 print(score)
 print(model.metrics_names)
